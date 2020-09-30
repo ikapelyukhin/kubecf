@@ -83,8 +83,24 @@
 {{- end }}
 
 - type: replace
-  path: /instance_groups/name=scheduler/jobs/name=cfdot/properties/quarks?/bpm/processes
-  value: []
+  path: /instance_groups/name=scheduler/jobs/name=loggr-udp-forwarder/properties?/quarks/envs
+  value:
+  - name: INDEX
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.labels['statefulset.kubernetes.io/pod-name']
+  - name: IP
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP
+
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=loggr-syslog-binding-cache/properties?/quarks
+  value:
+    ports:
+    - name: binding-cache
+      protocol: TCP
+      internal: 9000
 
 {{- if not .Values.features.eirini.enabled }}
 
